@@ -10,5 +10,3 @@ def make_lilypond(file_name):
     new_file.write("test")
     new_file.close()
     return
-
-make_lilypond(file_name)
