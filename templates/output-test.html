@@ -5,11 +5,11 @@
     <title>Guitar Chord Finder</title>
   </head>
   <body>
+    <p>your chord has these notes</p>
     <ul>
-      <li>{{note1}}</li>
-      <li>{{note2}}</li>
-      <li>{{note3}}</li>
-      <li>{{note4}}</li>
+      {% for note in notes %}
+        <li><p>{{ note }}</p></li>
+      {% endfor %}
     </ul>
   </body>
 </html>
