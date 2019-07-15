@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Guitar Chord Finder</title>
-  </head>
-  <body>
+{% extends 'layout.html'%}
+
+{% block body %}
       <p>Enter the notes of your chord</p>
       <form method="post" action="{{ url_for('test')}}">
         <label for="note1">Note 1</label>
@@ -21,5 +17,4 @@
 
         <button>Push for chords</button>
       </form>
-  </body>
-</html>
+{% endblock %}
