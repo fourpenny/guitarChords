@@ -3,18 +3,23 @@
 {% block body %}
       <p>Enter the notes of your chord</p>
       <form method="post" action="{{ url_for('test')}}">
-        <label for="note1">Note 1</label>
-        <input name="note1" value="A">
+        <fieldset id="chord-notes">
+          <label for="note1">Note 1</label>
+          <input name="note1" value="A">
 
-        <label for="note2">Note 2</label>
-        <input name="note2" value="C">
+          <label for="note2">Note 2</label>
+          <input name="note2" value="C">
 
-        <label for="note3">Note 3</label>
-        <input name="note3" value="E">
+          <label for="note3">Note 3</label>
+          <input name="note3" value="E">
 
-        <label for="note4">Note 4</label>
-        <input name="note4" value="G">
-
+          <label for="note4">Note 4</label>
+          <input name="note4" value="G">
+        </fieldset>
+        <fieldset id="how-many">
+          <label>How many differnet pitches do you want in each chord?</label>
+          <input type="number" name="how-many-notes">
+        </fieldset>
         <button>Push for chords</button>
       </form>
 {% endblock %}

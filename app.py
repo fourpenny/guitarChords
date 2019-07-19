@@ -13,7 +13,7 @@ def test():
     notes = [request.form['note1'], request.form['note2'], request.form['note3'],
     request.form['note4']]
     make_lilypond(notes)
-    return render_template('output-test.html', notes = notes)
+    return render_template('output_test.html', notes = notes)
 
 if __name__ == '__main__':
     app.run(debug=True)
