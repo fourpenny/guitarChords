@@ -22,7 +22,6 @@ guitar_strings = {
     'b3':'g6',
     'e4':'c6'
 }
-chords = []
 #for test purposes only, will be replaced with data submitted by user
 test_chord = ['a', 'c#', 'e']
 
@@ -67,9 +66,6 @@ def translate_accidental(note):
                 return 'es'
             else:
                 return
-
-def what_fret(note):
-    return
 
 def find_chords(notes):
     return
@@ -117,12 +113,39 @@ class Pitch_Class(object):
         return "pitch_class: "+str(self.pitch)+str(self.octaves)
 
 class Note(Pitch_Class):
-    def __init__(self, pitch, octave, string):
+    def __init__(self, pitch):
         Pitch_Class.__init__(self, pitch)
-        self.octave = octave
-        self.string = string
+        self.octave = None
+        self.string = None
+        self.fret = None
+    def set_fret(self):
+        """figures out which fret a given note is played using on a particular
+        string"""
+        pitch_class = str(self.pitch[0])
+        octave = int(self.pitch[-1])
+        string_pitch = str(self.string[0])
+        string_octave = int(self.string[-1])
+        fret = 0
+        if notes.index(pitch_class) > notes.index(string_pitch):
+            if notes.index(pitch_class) >= 3:
+                fret += (2 * (notes.index(pitch_class) - notes.index(string_pitch)) - 1)
+                #accounts for half step in between E and F, distance of only 1 fret
+                #instead of 2
+            else:
+                fret += 2 * (notes.index(pitch_class) - notes.index(string_pitch))
+        elif notes.index(pitch_class) < notes.index(string_pitch):
+            if notes.index(pitch_class) <= 2:
+                fret -= (2 * (notes.index(string_pitch) - notes.index(pitch_class)) + 1)
+                #adds back the half step present between E and F, sim to above
+            else:
+                fret -= 2 * (notes.index(pitch_class) - notes.index(string_pitch))
+        while octave > string_octave:
+            fret += 12
+            string_octave += 1
+        self.fret = fret
+        return
     def __str__(self):
-        return "note: "+str(self.octave)+str(self.string)
+        return "note: "+str(self.octave)+str(self.string)+str(self.fret)
 
 class Chord(object):
     def __init__(self, notes):
@@ -132,7 +155,7 @@ class Chord(object):
     def print_lilypond(self):
         return
 
-note_1 = Pitch_Class("e")
+note_1 = Pitch_Class(test_chord[0])
 note_1.set_octaves()
 note_2 = []
 note_3 = []
