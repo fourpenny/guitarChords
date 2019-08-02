@@ -23,7 +23,7 @@ guitar_strings = {
     'e4':'c6'
 }
 #for test purposes only, will be replaced with data submitted by user
-test_chord = ['a', 'c#', 'e']
+test_chord_notes = ['a', 'c#', 'e']
 
 def make_lilypond(notes):
     """writes the given notes to a new lilypond file with a random name"""
@@ -73,6 +73,11 @@ def find_chords(notes):
 #make_lilypond(file_name, test_chord)
 
 #making new classes right here
+class Guitar_String(object):
+    def __init__(self, lowest_note, highest_note):
+        self.lowest_note = lowest_note
+        self.highest_note = highest_note
+
 class Pitch_Class(object):
     def __init__(self, pitch):
         self.pitch = pitch
@@ -95,6 +100,7 @@ class Pitch_Class(object):
             l_string_position = notes.index(lowest_note[0])
             h_string_position = notes.index(highest_note[0])
             note_position = notes.index(self.pitch[0])
+            #is the note above or below the fundamental of the given string?
             if not note_position >= l_string_position:
                 current_octave += 1
             while current_octave < int(highest_note[(len(highest_note) - 1)]):
@@ -150,16 +156,47 @@ class Note(Pitch_Class):
 class Chord(object):
     def __init__(self, notes):
         self.notes = notes
+    def __str__(self):
+        pitch_classes = []
+        for note in self.notes:
+            pitch_classes.append(note.pitch)
+        return "the notes in this chord are " + str(pitch_classes)
+    def set_root(self):
+        self.root = self.notes[0]
+        return
+    def what_string_is_root_on:
+        """is the root note in the given octave on a given string???"""
+        return
+    def get_root(self):
+        return self.root
     def get_notes(self):
         return self.notes
     def print_lilypond(self):
         return
 
-note_1 = Pitch_Class(test_chord[0])
+note_1 = Pitch_Class(test_chord_notes[0])
 note_1.set_octaves()
-note_2 = []
-note_3 = []
-note_4 = []
+note_2 = Pitch_Class(test_chord_notes[1])
+note_2.set_octaves()
+note_3 = Pitch_Class(test_chord_notes[2])
+note_3.set_octaves()
 
-print(note_1.get_pitch())
-print(note_1.get_octaves())
+def make_a_bunch_of_chords(all_the_notes):
+    string = 0
+    if string < 5
+        if root_note_on_given_string in root_notes:
+            if not second_note in chord:
+                if not third_note in chord:
+                #ect... do a loop (duh)
+                    if not number_of_chords #with this root > 10:
+                    #make a chord based off of given data
+        else:
+            #root note isn't on the string and the string isn't the highest one
+            string += 1
+    #done with this root note, go to the next one
+    return
+
+test_chord = Chord([note_1, note_2, note_3])
+
+print(test_chord)
+#make_a_bunch_of_chords(test_chord)
