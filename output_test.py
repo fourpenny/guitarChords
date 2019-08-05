@@ -14,14 +14,14 @@ template_text = lp_template.read()
 #Should be self-explanatory, in this order b/c octaves start with C for some
 #reason even though we start the alphabet over at g????
 notes = ['c', 'd', 'e', 'f', 'g', 'a', 'b']
-guitar_strings = {
-    'e2':'c4',
-    'a2':'f4',
-    'd3':'bb4',
-    'g3':'eb5',
-    'b3':'g6',
-    'e4':'c6'
-}
+guitar_strings = [
+    ['e2','c4'],
+    ['a2','f4'],
+    ['d3','bb4'],
+    ['g3','eb5'],
+    ['b3','g6'],
+    ['e4','c6']
+]
 #for test purposes only, will be replaced with data submitted by user
 test_chord_notes = ['a', 'c#', 'e']
 
@@ -90,10 +90,11 @@ class Pitch_Class(object):
         notes_on_each = defaultdict(list)
         global guitar_strings
         global notes
-        for lowest_note in guitar_strings:
+        current_string = 0
+        while current_string < 6:
+            lowest_note = guitar_strings[current_string][0]
             pitch = str(self.pitch)
-            current_string = lowest_note
-            highest_note = guitar_strings[lowest_note]
+            highest_note = guitar_strings[current_string][1]
             octaves = []
             current_octave = int(lowest_note[1])
             l_string_position = notes.index(lowest_note[0])
@@ -109,7 +110,9 @@ class Pitch_Class(object):
             if note_position <= h_string_position:
                 octaves.append(current_octave)
             notes_on_each[lowest_note].append(octaves)
+            current_string += 1
         self.octaves = notes_on_each
+
     def get_pitch(self):
         return self.pitch
     def get_octaves(self):
@@ -118,19 +121,25 @@ class Pitch_Class(object):
         return "pitch_class: "+str(self.pitch)+" "+str(self.octaves)
 
 class Note(Pitch_Class):
-    def __init__(self, pitch):
+    def __init__(self, pitch, octave):
         Pitch_Class.__init__(self, pitch)
-        self.octave = None
+        self.octave = octave
         self.string = None
         self.fret = None
-    def set_fret(self):
+    def set_fret(self, string):
         """figures out which fret a given note is played using on a particular
         string"""
+        global guitar_strings
         pitch_class = str(self.pitch[0])
-        octave = int(self.pitch[-1])
-        string_pitch = str(self.string[0])
-        string_octave = int(self.string[-1])
+        octave = int(self.octave)
+        current_string = guitar_strings[0]
+        string_pitch = current_string[0][0]
+        string_octave = int(current_string[0][-1])
         fret = 0
+        print(pitch_class)
+        print(current_string)
+        print(string_pitch)
+        print(string_octave)
         if notes.index(pitch_class) > notes.index(string_pitch):
             if notes.index(pitch_class) >= 3:
                 fret += (2 * (notes.index(pitch_class) - notes.index(string_pitch)) - 1)
@@ -149,8 +158,18 @@ class Note(Pitch_Class):
             string_octave += 1
         self.fret = fret
         return
+    def set_octave(self, octave):
+        self.octave = octave
+        return
+    def get_octave(self):
+        return self.octave
+    def set_string(self,string):
+        self.string = string
+        return
+    def get_string(self):
+        return self.string
     def __str__(self):
-        return "note: "+str(self.octave)+str(self.string)+str(self.fret)
+        return "note: "+str(self.pitch)+str(self.octave)+" "+str(self.string)+" "+str(self.fret)
 
 class Chord(object):
     def __init__(self, notes):
@@ -192,14 +211,22 @@ def make_a_bunch_of_chords(all_the_notes):
         current_pitch = Pitch_Class(pitch)
         current_pitch.set_octaves()
         pitch_octaves = current_pitch.get_octaves()
-        for string, octaves in pitch_octaves:
-            """figure out how to access octaves from defaultdict list (value from key/value pair)"""
-            #if string < 5
+        print(pitch_octaves)
+        current_note_ocatves = list(pitch_octaves.copy().values())
+        for octaves in current_note_ocatves:
+            if string < 5:
+                root_pc = str(current_pitch.get_pitch())
+                root_octave = current_note_ocatves[0][0][0]
+                root_note = Note(root_pc, root_octave)
+                root_note.set_string(string)
+                root_note.set_fret(string)
+                print(root_note)
+                break
             #if pitch in root_notes:
                 #if not second_note in chord:
                     #if not third_note in chord:
                         #ect... do a loop (duh)
-                    #if not number_of_chords #with this root > 10:
+                    #if not number_of_chords with this root > 10:
                     #make a chord based off of given data
                     #else:
                         #root note isn't on the string and the string isn't the highest one
