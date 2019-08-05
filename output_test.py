@@ -82,8 +82,6 @@ class Pitch_Class(object):
     def __init__(self, pitch):
         self.pitch = pitch
         self.octaves = None
-    def set_pitch(self, newpitch):
-        self.pitch = newpitch
     def set_octaves(self):
         """how many particular instances of a specific pitch class are on each
         string? this function finds that out and stores it in a list, starting
@@ -93,13 +91,14 @@ class Pitch_Class(object):
         global guitar_strings
         global notes
         for lowest_note in guitar_strings:
+            pitch = str(self.pitch)
             current_string = lowest_note
             highest_note = guitar_strings[lowest_note]
             octaves = []
             current_octave = int(lowest_note[1])
             l_string_position = notes.index(lowest_note[0])
             h_string_position = notes.index(highest_note[0])
-            note_position = notes.index(self.pitch[0])
+            note_position = notes.index(pitch[0])
             #is the note above or below the fundamental of the given string?
             if not note_position >= l_string_position:
                 current_octave += 1
@@ -116,7 +115,7 @@ class Pitch_Class(object):
     def get_octaves(self):
         return self.octaves
     def __str__(self):
-        return "pitch_class: "+str(self.pitch)+str(self.octaves)
+        return "pitch_class: "+str(self.pitch)+" "+str(self.octaves)
 
 class Note(Pitch_Class):
     def __init__(self, pitch):
@@ -161,10 +160,12 @@ class Chord(object):
         for note in self.notes:
             pitch_classes.append(note.pitch)
         return "the notes in this chord are " + str(pitch_classes)
+    def __getitem__(self,index):
+        return self.notes[index]
     def set_root(self):
         self.root = self.notes[0]
         return
-    def what_string_is_root_on:
+    def what_string_is_root_on(self):
         """is the root note in the given octave on a given string???"""
         return
     def get_root(self):
@@ -182,21 +183,31 @@ note_3 = Pitch_Class(test_chord_notes[2])
 note_3.set_octaves()
 
 def make_a_bunch_of_chords(all_the_notes):
-    string = 0
-    if string < 5
-        if root_note_on_given_string in root_notes:
-            if not second_note in chord:
-                if not third_note in chord:
-                #ect... do a loop (duh)
-                    if not number_of_chords #with this root > 10:
+    chord_pitches = []
+    for note in all_the_notes:
+        chord_pitches.append(str(note.pitch))
+    print(chord_pitches)
+    for pitch in chord_pitches:
+        string = 0
+        current_pitch = Pitch_Class(pitch)
+        current_pitch.set_octaves()
+        pitch_octaves = current_pitch.get_octaves()
+        for string, octaves in pitch_octaves:
+            """figure out how to access octaves from defaultdict list (value from key/value pair)"""
+            #if string < 5
+            #if pitch in root_notes:
+                #if not second_note in chord:
+                    #if not third_note in chord:
+                        #ect... do a loop (duh)
+                    #if not number_of_chords #with this root > 10:
                     #make a chord based off of given data
-        else:
-            #root note isn't on the string and the string isn't the highest one
-            string += 1
-    #done with this root note, go to the next one
+                    #else:
+                        #root note isn't on the string and the string isn't the highest one
+                        #string += 1
+                        #done with this root note, go to the next one
+
     return
 
-test_chord = Chord([note_1, note_2, note_3])
 
-print(test_chord)
-#make_a_bunch_of_chords(test_chord)
+test_chord = Chord([note_1, note_2, note_3])
+make_a_bunch_of_chords(test_chord.notes)
