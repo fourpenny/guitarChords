@@ -67,16 +67,9 @@ def translate_accidental(note):
             else:
                 return
 
-def find_chords(notes):
-    return
-
 #make_lilypond(file_name, test_chord)
 
 #making new classes right here
-class Guitar_String(object):
-    def __init__(self, lowest_note, highest_note):
-        self.lowest_note = lowest_note
-        self.highest_note = highest_note
 
 class Pitch_Class(object):
     def __init__(self, pitch):
@@ -87,7 +80,7 @@ class Pitch_Class(object):
         string? this function finds that out and stores it in a list, starting
         on the lowest string
         """
-        notes_on_each = defaultdict(list)
+        notes_on_each = []
         global guitar_strings
         global notes
         current_string = 0
@@ -109,10 +102,10 @@ class Pitch_Class(object):
                     current_octave += 1
             if note_position <= h_string_position:
                 octaves.append(current_octave)
-            notes_on_each[lowest_note].append(octaves)
+            notes_on_each.append(octaves)
             current_string += 1
         self.octaves = notes_on_each
-
+        return
     def get_pitch(self):
         return self.pitch
     def get_octaves(self):
@@ -171,59 +164,66 @@ class Note(Pitch_Class):
     def __str__(self):
         return "note: "+str(self.pitch)+str(self.octave)+" "+str(self.string)+" "+str(self.fret)
 
-class Chord(object):
-    def __init__(self, notes):
-        self.notes = notes
+class Pitch_Collection(object):
+    #A collection of pitch classes without defined octaves/strings, used as the
+    #basis for more definite chords
+    def __init__(self, pitches):
+        self.pitches = pitches
+        return
+
+class Chord(Pitch_Collection):
+    #A chord that contains at least 2 definite pitches including their octave,
+    #string, and fret
+    def __init__(self, pitches):
+        Collection.__init__(self, pitches)
+        self.notes = []
+        return
     def __str__(self):
         pitch_classes = []
         for note in self.notes:
             pitch_classes.append(note.pitch)
         return "the notes in this chord are " + str(pitch_classes)
-    def __getitem__(self,index):
-        return self.notes[index]
-    def set_root(self):
-        self.root = self.notes[0]
-        return
-    def what_string_is_root_on(self):
-        """is the root note in the given octave on a given string???"""
-        return
-    def get_root(self):
-        return self.root
     def get_notes(self):
         return self.notes
     def print_lilypond(self):
         return
 
-note_1 = Pitch_Class(test_chord_notes[0])
-note_1.set_octaves()
-note_2 = Pitch_Class(test_chord_notes[1])
-note_2.set_octaves()
-note_3 = Pitch_Class(test_chord_notes[2])
-note_3.set_octaves()
-
-def make_a_bunch_of_chords(all_the_notes):
+def make_a_bunch_of_chords(pitch_collection):
     chord_pitches = []
-    for note in all_the_notes:
-        chord_pitches.append(str(note.pitch))
-    print(chord_pitches)
+    root_notes = []
+    second_notes = []
+    third_notes = []
+    current_chord = []
+    string = 0
+    for note in pitch_collection:
+        chord_pitches.append(note)
     for pitch in chord_pitches:
-        string = 0
-        current_pitch = Pitch_Class(pitch)
-        current_pitch.set_octaves()
-        pitch_octaves = current_pitch.get_octaves()
-        print(pitch_octaves)
-        current_note_ocatves = list(pitch_octaves.copy().values())
-        for octaves in current_note_ocatves:
-            if string < 5:
-                root_pc = str(current_pitch.get_pitch())
-                root_octave = current_note_ocatves[0][0][0]
-                root_note = Note(root_pc, root_octave)
-                root_note.set_string(string)
-                root_note.set_fret(string)
-                print(root_note)
-                break
-            #if pitch in root_notes:
-                #if not second_note in chord:
+        #this is where we start with the root and iterate through different voicings
+        #based on the each one
+        print(string)
+        current_root = Pitch_Class(pitch)
+        current_root.set_octaves()
+        root_octaves = current_root.get_octaves()
+        while string < (len(guitar_strings)-1):
+            octave_to_add = root_octaves[string][0]
+            while octave_to_add in root_octaves[string]:
+                if not (pitch+str(octave_to_add)) in root_notes:
+                    root_notes.append(pitch+str(octave_to_add))
+                    octave_to_add += 1
+                    print(root_notes)
+            #figure out how to iterate through all the strings???
+            break
+    #    if string < 5:
+    #        root_pc = str(current_pitch.get_pitch())
+    #        root_octave = current_note_ocatves[0][0][0]
+    #        root_note = Note(root_pc, root_octave)
+    #        root_note.set_string(string)
+    #        root_note.set_fret(string)
+    #        print(root_note)
+    #        if not current_pitch.pitch in root_notes:
+    #            current_chord.append(root_note)
+    #            root_notes.append(root_pc)
+    #        elif
                     #if not third_note in chord:
                         #ect... do a loop (duh)
                     #if not number_of_chords with this root > 10:
@@ -235,6 +235,5 @@ def make_a_bunch_of_chords(all_the_notes):
 
     return
 
-
-test_chord = Chord([note_1, note_2, note_3])
-make_a_bunch_of_chords(test_chord.notes)
+test_collection = Pitch_Collection(test_chord_notes)
+make_a_bunch_of_chords(test_collection.pitches)
