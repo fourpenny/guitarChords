@@ -19,7 +19,7 @@ guitar_strings = [
     ['a2','f4'],
     ['d3','bb4'],
     ['g3','eb5'],
-    ['b3','g6'],
+    ['b3','g5'],
     ['e4','c6']
 ]
 #for test purposes only, will be replaced with data submitted by user
@@ -101,7 +101,11 @@ class Pitch_Class(object):
                     octaves.append(current_octave)
                     current_octave += 1
             if note_position <= h_string_position:
-                octaves.append(current_octave)
+                if not len(pitch) == 1:
+                    if not note_position == h_string_position or not pitch[1] == "#":
+                        octaves.append(current_octave)
+                else:
+                    octaves.append(current_octave)
             notes_on_each.append(octaves)
             current_string += 1
         self.octaves = notes_on_each
@@ -190,29 +194,33 @@ class Chord(Pitch_Collection):
 
 def make_a_bunch_of_chords(pitch_collection):
     chord_pitches = []
-    root_notes = []
+    all_the_notes = []
     second_notes = []
     third_notes = []
     current_chord = []
-    string = 0
     for note in pitch_collection:
         chord_pitches.append(note)
     for pitch in chord_pitches:
+        string = 0
         #this is where we start with the root and iterate through different voicings
         #based on the each one
-        print(string)
         current_root = Pitch_Class(pitch)
         current_root.set_octaves()
         root_octaves = current_root.get_octaves()
-        while string < (len(guitar_strings)-1):
+        #creates a list of all possible root notes based on the given pitch collection
+        while string <= (len(guitar_strings)-1):
             octave_to_add = root_octaves[string][0]
             while octave_to_add in root_octaves[string]:
-                if not (pitch+str(octave_to_add)) in root_notes:
-                    root_notes.append(pitch+str(octave_to_add))
+                if not (pitch+str(octave_to_add)) in all_the_notes:
+                    print(octave_to_add)
+                    all_the_notes.append(pitch+str(octave_to_add))
                     octave_to_add += 1
-                    print(root_notes)
-            #figure out how to iterate through all the strings???
-            break
+                    print(all_the_notes)
+                else:
+                    break
+            string += 1
+            print(string)
+            continue
     #    if string < 5:
     #        root_pc = str(current_pitch.get_pitch())
     #        root_octave = current_note_ocatves[0][0][0]
