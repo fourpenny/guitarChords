@@ -123,13 +123,13 @@ class Note(Pitch_Class):
         self.octave = octave
         self.string = None
         self.fret = None
-    def set_fret(self, string):
+    def set_fret(self):
         """figures out which fret a given note is played using on a particular
         string"""
         global guitar_strings
         pitch_class = str(self.pitch[0])
         octave = int(self.octave)
-        current_string = guitar_strings[0]
+        current_string = guitar_strings[self.string]
         string_pitch = current_string[0][0]
         string_octave = int(current_string[0][-1])
         fret = 0
@@ -153,8 +153,11 @@ class Note(Pitch_Class):
         while octave > string_octave:
             fret += 12
             string_octave += 1
-        self.fret = fret
+        if fret <= 22:
+            self.fret = fret
         return
+    def get_fret(self):
+        return self.fret
     def set_octave(self, octave):
         self.octave = octave
         return
@@ -194,10 +197,10 @@ class Chord(Pitch_Collection):
 
 def make_a_bunch_of_chords(pitch_collection):
     chord_pitches = []
-    all_the_notes = []
-    second_notes = []
-    third_notes = []
+    all_the_pc = []
     current_chord = []
+    all_the_notes = []
+    possible_roots = []
     for note in pitch_collection:
         chord_pitches.append(note)
     for pitch in chord_pitches:
@@ -207,40 +210,30 @@ def make_a_bunch_of_chords(pitch_collection):
         current_root = Pitch_Class(pitch)
         current_root.set_octaves()
         root_octaves = current_root.get_octaves()
-        #creates a list of all possible root notes based on the given pitch collection
+        #creates a list of all possible notes to be used based on the given pitch collection
         while string <= (len(guitar_strings)-1):
             octave_to_add = root_octaves[string][0]
             while octave_to_add in root_octaves[string]:
-                if not (pitch+str(octave_to_add)) in all_the_notes:
+                if not (pitch+str(octave_to_add)) in all_the_pc:
                     print(octave_to_add)
-                    all_the_notes.append(pitch+str(octave_to_add))
+                    all_the_pc.append(pitch+str(octave_to_add))
                     octave_to_add += 1
-                    print(all_the_notes)
+                    print(all_the_pc)
                 else:
                     break
             string += 1
-            print(string)
             continue
-    #    if string < 5:
-    #        root_pc = str(current_pitch.get_pitch())
-    #        root_octave = current_note_ocatves[0][0][0]
-    #        root_note = Note(root_pc, root_octave)
-    #        root_note.set_string(string)
-    #        root_note.set_fret(string)
-    #        print(root_note)
-    #        if not current_pitch.pitch in root_notes:
-    #            current_chord.append(root_note)
-    #            root_notes.append(root_pc)
-    #        elif
-                    #if not third_note in chord:
-                        #ect... do a loop (duh)
-                    #if not number_of_chords with this root > 10:
-                    #make a chord based off of given data
-                    #else:
-                        #root note isn't on the string and the string isn't the highest one
-                        #string += 1
-                        #done with this root note, go to the next one
-
+    for pc in all_the_pc:
+        string = 0
+        if len(pc) == 2:
+            root = Note(pc[0], pc[1])
+        else:
+            root = Note(pc[0]+pc[1], pc[2])
+        root.set_string(string)
+        root.set_fret()
+        if root.get_fret() != None:
+            possible_roots.append(root)
+        print(possible_roots)
     return
 
 test_collection = Pitch_Collection(test_chord_notes)
