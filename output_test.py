@@ -133,10 +133,6 @@ class Note(Pitch_Class):
         string_pitch = current_string[0][0]
         string_octave = int(current_string[0][-1])
         fret = 0
-        print(pitch_class)
-        print(current_string)
-        print(string_pitch)
-        print(string_octave)
         if notes.index(pitch_class) > notes.index(string_pitch):
             if notes.index(pitch_class) >= 3:
                 fret += (2 * (notes.index(pitch_class) - notes.index(string_pitch)) - 1)
@@ -153,7 +149,7 @@ class Note(Pitch_Class):
         while octave > string_octave:
             fret += 12
             string_octave += 1
-        if fret <= 22:
+        if fret <= 22 and fret >= 0:
             self.fret = fret
         return
     def get_fret(self):
@@ -201,10 +197,10 @@ def make_a_bunch_of_chords(pitch_collection):
     current_chord = []
     all_the_notes = []
     possible_roots = []
+    string = 0
     for note in pitch_collection:
         chord_pitches.append(note)
     for pitch in chord_pitches:
-        string = 0
         #this is where we start with the root and iterate through different voicings
         #based on the each one
         current_root = Pitch_Class(pitch)
@@ -215,25 +211,38 @@ def make_a_bunch_of_chords(pitch_collection):
             octave_to_add = root_octaves[string][0]
             while octave_to_add in root_octaves[string]:
                 if not (pitch+str(octave_to_add)) in all_the_pc:
-                    print(octave_to_add)
+                    #print(octave_to_add)
                     all_the_pc.append(pitch+str(octave_to_add))
                     octave_to_add += 1
                     print(all_the_pc)
                 else:
-                    break
+                    octave_to_add += 1
             string += 1
             continue
+        string = 0
     for pc in all_the_pc:
         string = 0
-        if len(pc) == 2:
-            root = Note(pc[0], pc[1])
-        else:
-            root = Note(pc[0]+pc[1], pc[2])
-        root.set_string(string)
-        root.set_fret()
-        if root.get_fret() != None:
-            possible_roots.append(root)
-        print(possible_roots)
+        while string <= (len(guitar_strings)-1):
+            #finding the fret position of each note
+            if len(pc) == 2:
+                root = Note(pc[0], pc[1])
+            else:
+                root = Note(pc[0]+pc[1], pc[2])
+            root.set_string(string)
+            root.set_fret()
+            if root.get_fret() != None:
+                print(root.get_string())
+                print(root.get_fret())
+                #for some reason notes too low in range to be on string
+                #are still being added, need to figure out why
+                possible_roots.append(root)
+            string += 1
+    for i in range(len(possible_roots)):
+        for j in range(i + 1, len(possible_roots)):
+            current_chord.append(possible_roots[i])
+            if -3 <= possible_roots[i].get_fret() - possible_roots[j].get_fret() <= 3:
+                if possible_roots[i].get_string()
+                    current_chord.append(possible_roots[j])
     return
 
 test_collection = Pitch_Collection(test_chord_notes)
